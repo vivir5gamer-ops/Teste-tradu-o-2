@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#11130f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<title>Miraa Web — Japanese Learning Player</title>
+<style>
+:root{--bg:#f4f5ef;--surface:#fff;--ink:#171a16;--muted:#747a72;--line:#e1e5dc;--dark:#191d18;--lime:#baf486;--lime2:#79a950;--soft:#eef2e9;--shadow:0 12px 35px #17201312}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Noto Sans JP",sans-serif}.app{width:min(100%,520px);margin:auto;min-height:100vh;padding-bottom:82px}
+.top{height:60px;background:#f8f9f4ee;backdrop-filter:blur(16px);position:sticky;top:0;z-index:40;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 15px}.brand{font-weight:900;font-size:18px}.top button{border:0;background:none;font-size:24px;color:var(--ink)}
+.screen{padding:12px}.welcome{padding:8px 4px 14px}.welcome .small{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.08em;text-transform:uppercase}.welcome h1{font-size:26px;line-height:1.12;margin:5px 0}.welcome p{font-size:13px;color:var(--muted);margin:0}
+.player{background:#dfe3d9;border-radius:22px;padding:7px;box-shadow:var(--shadow)}.stage{position:relative;overflow:hidden;background:#080908;border-radius:17px;aspect-ratio:16/9}.stage video,.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:contain;background:#080908}.yt{display:none}.sub{position:absolute;left:5%;right:5%;bottom:6%;text-align:center;pointer-events:none;z-index:4}.line{display:table;max-width:100%;margin:3px auto;padding:4px 10px;border-radius:8px;background:#000b;color:#fff;text-shadow:0 1px 2px #000;line-height:1.35}.jp{font-size:21px;font-weight:850}.hira{font-size:15px;color:#eef7e9}.pt{font-size:14px}.timeline{height:5px;background:#c9d0c2;border-radius:8px;margin:8px 2px;overflow:hidden}.timeline>div{height:100%;width:0;background:var(--lime2)}.playerbar{display:flex;align-items:center;gap:6px}.pbtn{height:38px;border:1px solid var(--line);background:#fff;border-radius:11px;font-weight:800;padding:0 10px}.pbtn.main{background:var(--dark);color:#fff;min-width:42px}.pbtn.repeat{flex:1}
+.speed{margin-top:8px;display:flex;align-items:center;gap:6px}.speed button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 9px;font-size:12px}.speed span{margin-left:auto;color:var(--muted);font-size:11px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:19px;padding:14px;margin-top:10px;box-shadow:var(--shadow)}.activejp{font-size:25px;font-weight:850;line-height:1.5}.activehira{font-size:16px;color:#657060;margin-top:2px}.activept{font-size:15px;color:#555d54;margin-top:4px}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.tag{font-size:10px;font-weight:800;color:#667064;background:var(--soft);padding:5px 9px;border-radius:999px}
+.tabs{display:flex;gap:6px;overflow:auto;margin:12px 0 4px}.tabs button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-weight:800}.tabs .on{background:var(--dark);color:#fff}
+.cues{max-height:330px;overflow:auto;border-top:1px solid var(--line);margin-top:9px}.cue{padding:11px 7px;border-bottom:1px solid var(--line);cursor:pointer}.cue.active{background:#eff8e8;border-radius:10px}.cue .time{font-size:10px;color:#8a9088;margin-bottom:3px}.cue .cjp{font-size:16px;font-weight:800}.cue .chira{font-size:12px;color:#737a70}.cue .cpt{font-size:12px;color:#5f675e;margin-top:2px}
+.sectionTitle{font-size:14px;font-weight:900;margin-bottom:9px}.actions{display:flex;gap:7px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:10px 12px;font-weight:850;background:var(--dark);color:#fff}.btn.green{background:var(--lime);color:#1d2a18}.btn.light{background:var(--soft);color:var(--ink)}.btn:disabled{opacity:.45}
+input,textarea{font:inherit;width:100%;border:1px solid var(--line);background:#fafbf7;border-radius:11px;padding:10px}.field{margin-top:9px}.label{font-size:11px;color:var(--muted);font-weight:800;display:block;margin-bottom:5px}.row{display:flex;gap:6px}.row>*{flex:1}
+.status{font-size:11px;color:var(--muted);line-height:1.45;margin-top:8px}.bar{height:7px;background:#dfe4da;border-radius:8px;overflow:hidden;margin-top:9px}.bar>div{height:100%;width:0;background:var(--lime2)}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);height:72px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;z-index:50;padding-bottom:env(safe-area-inset-bottom)}.bottom button{border:0;background:none;color:#737a72;font-size:10px}.bottom b{font-size:21px;display:block}.bottom .on{color:#20261e;font-weight:900}
+.sheet{position:fixed;z-index:80;left:50%;bottom:0;transform:translate(-50%,110%);width:min(520px,100%);max-height:82vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:17px;box-shadow:0 -15px 45px #0002;transition:.2s}.sheet.open{transform:translate(-50%,0)}.close{float:right;border:0;background:var(--soft);border-radius:50%;width:32px;height:32px}.sheet h2{font-size:19px;margin:2px 40px 14px 0}.toast{position:fixed;z-index:100;bottom:84px;left:50%;transform:translate(-50%,20px);opacity:0;background:#20251f;color:#fff;padding:10px 14px;border-radius:12px;font-size:12px;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.hidden{display:none!important}@media(max-width:380px){.jp{font-size:18px}.hira{font-size:13px}.pt{font-size:12px}.activejp{font-size:22px}}
+.speednote{font-size:11px;opacity:.68;margin-top:5px}\n</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><button onclick="topPage()">‹</button><div class="brand">Miraa</div><button onclick="openSheet('settings')">⚙</button></header>
+<main class="screen">
+<section class="welcome"><div class="small">Japanese learning</div><h1>Aprenda ouvindo e repetindo</h1><p>Vídeo + legendas sincronizadas + shadowing.</p></section>
+
+<section class="player">
+  <div class="stage">
+    <video id="video" playsinline preload="metadata"></video>
+    <iframe id="yt" class="yt" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    <div class="sub">
+      <div class="line jp" id="ovJP"></div>
+      <div class="line hira" id="ovHira"></div>
+      <div class="line pt" id="ovPT"></div>
+    </div>
+  </div>
+  <div class="timeline"><div id="progress"></div></div>
+  <div class="playerbar">
+    <button class="pbtn" onclick="seek(-3)">↶ 3s</button>
+    <button class="pbtn main" id="playBtn" onclick="togglePlay()">▶</button>
+    <button class="pbtn repeat" onclick="repeatCurrent()">↻ Repetir frase</button>
+    <button class="pbtn" onclick="seek(3)">3s ↷</button>
+  </div>
+  <div class="speed"><button onclick="speed(-.25)">−</button><button onclick="speed(.25)">+</button><span id="speedLabel">1,00×</span></div>
+</section>
+
+<section class="card">
+  <div class="activejp" id="jpText">Carregue um vídeo e transcreva o áudio.</div>
+  <div class="activehira" id="hiraText"></div>
+  <div class="activept" id="ptText"></div>
+  <div class="tags"><span class="tag" id="cueTag">0 frases</span><span class="tag" id="clock">00:00</span><span class="tag" id="sourceTag">LOCAL</span></div>
+</section>
+
+<div class="tabs">
+<button class="on" onclick="setMode('all',this)">JP + ひら + PT</button>
+<button onclick="setMode('jp',this)">日本語</button>
+<button onclick="setMode('hira',this)">ひらがな</button>
+<button onclick="setMode('pt',this)">Português</button>
+</div>
+
+<section class="card" id="homeCard">
+<div class="sectionTitle">Material</div>
+<div class="field"><label class="label">Vídeo ou áudio</label><input id="mediaFile" type="file" accept="video/*,audio/*"></div>
+<div class="field"><label class="label">Legenda existente</label><input id="srtFile" type="file" accept=".srt,.vtt,.txt"></div>
+<div class="field"><label class="label">YouTube</label><div class="row"><input id="ytUrl" placeholder="Cole a URL do vídeo"><button class="btn light" onclick="loadYouTube()">Abrir</button></div></div>
+<div class="status" id="fileStatus">Nenhum material carregado.</div>
+</section>
+
+<section class="card">
+<div class="sectionTitle">Transcrever áudio → 3 legendas</div>
+<div class="status">Envia o áudio para o servidor GPU e recebe as frases com timestamps. Hiragana e português são gerados depois.</div>
+<div class="actions" style="margin-top:10px"><button class="btn green" id="transcribeBtn" onclick="transcribeMedia()">⚡ Transcrever rápido</button><div class="speednote">GPU Whisper • rápido / equilibrado / preciso</div><button class="btn light" onclick="exportSRT()">Exportar SRT</button></div>
+<div class="bar hidden" id="tbar"><div></div></div><div class="status" id="tstatus"></div>
+</section>
+
+<section class="card">
+<div class="sectionTitle">Legendas</div>
+<div class="actions"><button class="btn green" onclick="repeatCurrent()">↻ Repetir</button><button class="btn light" onclick="toggleTranslation()">🇧🇷 PT</button><button class="btn light" onclick="editCurrent()">✎ Editar</button></div>
+<div class="cues" id="cueList"></div>
+</section>
+
+<section class="card">
+<div class="sectionTitle">Echo / Shadowing</div>
+<div class="actions"><button class="btn green" onclick="echo()">▶ Ouvir → repetir</button><button class="btn light" id="recBtn" onclick="record()">🎙 Gravar</button><button class="btn light" onclick="stopRecord()">■ Parar</button></div>
+<div class="status" id="echoStatus">Pronto.</div><audio id="recorded" class="hidden" controls style="width:100%;margin-top:8px"></audio>
+</section>
+
+<section class="card">
+<div class="sectionTitle">✨ Análise</div>
+<div class="actions"><button class="btn green" onclick="analyze()">Explicar frase</button><button class="btn light" onclick="savePhrase()">☆ Salvar</button></div>
+<div class="status" id="analysis"></div>
+</section>
+</main>
+<nav class="bottom"><button class="on" onclick="go('homeCard')"><b>⌂</b>Player</button><button onclick="go('homeCard')"><b>＋</b>Adicionar</button><button onclick="go('transcribeBtn')"><b>✦</b>Transcrever</button><button onclick="showSaved()"><b>☆</b>Salvos</button></nav>
+</div>
+
+<div class="sheet" id="settings"><button class="close" onclick="closeSheet('settings')">×</button><h2>Configurações de legendas</h2>
+<div class="sectionTitle">Exibição</div><div class="actions"><button class="btn light" onclick="setMode('all')">Mostrar todas</button><button class="btn light" onclick="setMode('jp')">Só japonês</button><button class="btn light" onclick="setMode('hira')">Só hiragana</button><button class="btn light" onclick="setMode('pt')">Só português</button></div>
+<div class="sectionTitle" style="margin-top:18px">Armazenamento</div><div class="status" id="savedInfo"></div><button class="btn warn" style="margin-top:8px" onclick="clearSaved()">Apagar salvos</button>
+</div>
+<div class="sheet" id="editor"><button class="close" onclick="closeEditor()">×</button><h2>Editar legenda</h2><div class="row"><input id="edStart" type="number" step=".001"><input id="edEnd" type="number" step=".001"></div><div class="field"><textarea id="edText"></textarea></div><button class="btn green" style="margin-top:8px" onclick="applyEdit()">Salvar</button></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const video=document.getElementById('video'),yt=document.getElementById('yt');
+let cues=[],current=-1,mode='all',rate=1,repeatStop=null,recorder=null,chunks=[],editIndex=-1;
+
+const dict={'これ':'isto','ここ':'aqui','は':'partícula de tópico','が':'partícula de sujeito','を':'partícula de objeto','です':'forma polida de ser/estar','ます':'forma polida do verbo','美味しい':'delicioso','神社':'santuário xintoísta','御崎':'Misaki / cabo','私':'eu','あなた':'você'};
+function toast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');clearTimeout(window.__t);window.__t=setTimeout(()=>x.classList.remove('show'),1900)}
+function fmt(s){s=Math.max(0,s||0);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0')}
+function ts(x){const ms=Math.floor((x%1)*1000),z=Math.floor(x),ss=z%60,mm=Math.floor(z/60)%60,hh=Math.floor(z/3600);return [hh,mm,ss].map(v=>String(v).padStart(2,'0')).join(':')+','+String(ms).padStart(3,'0')}
+function parseTime(x){x=x.trim().replace(',','.');let p=x.split(':').map(Number);return p.length===3?p[0]*3600+p[1]*60+p[2]:p.length===2?p[0]*60+p[1]:Number(x)||0}
+function parseSRT(text){text=text.replace(/^\uFEFF/,'').replace(/\r/g,'').trim();if(!text)return[];return text.split(/\n\s*\n/).map(b=>{let l=b.split('\n'),i=l.findIndex(x=>x.includes('-->'));if(i<0)return null;let a=l[i].split('-->');if(a.length<2)return null;let s=parseTime(a[0]),e=parseTime(a[1].split(/\s+/)[0]),t=l.slice(i+1).join('\n').replace(/<[^>]*>/g,'').trim();return e>s&&t?{start:s,end:e,text:t,hiragana:'',pt:''}:null}).filter(Boolean).sort((a,b)=>a.start-b.start)}
+function active(t){let lo=0,hi=cues.length-1,ans=-1;while(lo<=hi){let m=(lo+hi)>>1;if(cues[m].start<=t){ans=m;lo=m+1}else hi=m-1}return ans>=0&&t<=cues[ans].end?ans:-1}
+function render(i){current=i;let c=cues[i];document.getElementById('ovJP').textContent=c&&mode!=='pt'?c.text:'';document.getElementById('ovHira').textContent=c&&(mode==='all'||mode==='hira')?c.hiragana||'':'';document.getElementById('ovPT').textContent=c&&(mode==='all'||mode==='pt')?c.pt||'':'';document.getElementById('jpText').textContent=c?c.text:'Carregue um vídeo e transcreva o áudio.';document.getElementById('hiraText').textContent=c?.hiragana||'';document.getElementById('ptText').textContent=(c&&mode!=='jp'&&mode!=='hira')?(c.pt||''):(mode==='pt'?(c?.pt||''):'');document.getElementById('clock').textContent=fmt(video.currentTime);document.querySelectorAll('.cue').forEach((x,n)=>x.classList.toggle('active',n===i))}
+function sync(){if(!video.src)return;let t=video.currentTime;document.getElementById('progress').style.width=(video.duration?100*t/video.duration:0)+'%';let i=active(t);if(i!==current)render(i);else document.getElementById('clock').textContent=fmt(t)}
+video.addEventListener('timeupdate',sync);video.addEventListener('loadedmetadata',sync);video.addEventListener('seeking',sync);video.addEventListener('play',()=>document.getElementById('playBtn').textContent='Ⅱ');video.addEventListener('pause',()=>document.getElementById('playBtn').textContent='▶');
+document.getElementById('mediaFile').onchange=e=>{let f=e.target.files[0];if(!f)return;yt.style.display='none';video.style.display='block';video.src=URL.createObjectURL(f);video.load();document.getElementById('sourceTag').textContent='LOCAL';document.getElementById('fileStatus').textContent='Material carregado: '+f.name;toast('Vídeo/áudio carregado')};
+document.getElementById('srtFile').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{cues=parseSRT(r.result);cues.forEach(c=>c.pt='');current=-1;renderList();sync();toast(cues.length+' legendas carregadas')};r.readAsText(f,'UTF-8')};
+function renderList(){let b=document.getElementById('cueList');b.innerHTML='';document.getElementById('cueTag').textContent=cues.length+' frases';cues.forEach((c,i)=>{let d=document.createElement('div');d.className='cue';d.innerHTML='<div class="time">'+fmt(c.start)+' → '+fmt(c.end)+'</div><div class="cjp">'+esc(c.text)+'</div><div class="chira">'+esc(c.hiragana||'')+'</div><div class="cpt">'+esc(c.pt||'')+'</div>';d.onclick=()=>{video.currentTime=c.start;video.play().catch(()=>{});};b.appendChild(d)})}
+function esc(x){return String(x||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function seek(n){if(!video.src)return;video.currentTime=Math.max(0,Math.min(video.duration||Infinity,video.currentTime+n));sync()}
+function togglePlay(){if(!video.src)return toast('Carregue um vídeo ou áudio');video.paused?video.play():video.pause()}
+function speed(n){rate=Math.max(.5,Math.min(2,rate+n));video.playbackRate=rate;document.getElementById('speedLabel').textContent=rate.toFixed(2).replace('.',',')+'×'}
+function repeatCurrent(){if(current<0)return toast('Nenhuma frase ativa');clearInterval(repeatStop);let c=cues[current];video.currentTime=c.start;video.play();repeatStop=setInterval(()=>{if(video.currentTime>=c.end){video.pause();clearInterval(repeatStop)}},40)}
+function setMode(m,el){mode=m;if(el){document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));el.classList.add('on')}render(current)}
+function toggleTranslation(){mode=mode==='pt'?'all':'pt';render(current)}
+function go(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'})}
+function topPage(){window.scrollTo({top:0,behavior:'smooth'})}
+function openSheet(id){document.getElementById(id).classList.add('open');if(id==='settings')document.getElementById('savedInfo').textContent='Frases salvas: '+JSON.parse(localStorage.saved||'[]').length+' · Palavras: '+JSON.parse(localStorage.words||'[]').length}
+function closeSheet(id){document.getElementById(id).classList.remove('open')}
+function editCurrent(){if(current<0)return toast('Selecione uma frase');editIndex=current;let c=cues[current];edStart.value=c.start;edEnd.value=c.end;edText.value=c.text;openSheet('editor')}
+function closeEditor(){closeSheet('editor')}
+function applyEdit(){let s=+edStart.value,e=+edEnd.value,t=edText.value.trim();if(!(e>s&&t))return toast('Valores inválidos');cues[editIndex]={...cues[editIndex],start:s,end:e,text:t};cues.sort((a,b)=>a.start-b.start);renderList();current=-1;sync();closeEditor();toast('Legenda salva')}
+function savePhrase(){if(current<0)return;let a=JSON.parse(localStorage.saved||'[]'),t=cues[current].text;if(!a.includes(t))a.push(t);localStorage.saved=JSON.stringify(a);toast('Frase salva')}
+function showSaved(){let a=JSON.parse(localStorage.saved||'[]');document.getElementById('analysis').textContent=a.length?'☆ '+a.join(' · '):'Nenhuma frase salva.';go('analysis')}
+function clearSaved(){localStorage.removeItem('saved');localStorage.removeItem('words');openSheet('settings');toast('Salvos apagados')}
+function analyze(){if(current<0)return toast('Selecione uma frase');let t=cues[current].text,found=Object.keys(dict).filter(k=>t.includes(k));document.getElementById('analysis').innerHTML='<b>'+esc(t)+'</b><br><br>'+ (found.length?found.map(k=>esc(k)+' — '+esc(dict[k])).join('<br>'):'Nenhum vocabulário local cadastrado.')+'<br><br><b>Gramática:</b> partículas e formas polidas são identificadas pelo cadastro local.';go('analysis')}
+
+let miraaASR=null;
+let miraaASRLoading=null;
+
+async function getASR(){
+  if(miraaASR) return miraaASR;
+  if(miraaASRLoading) return await miraaASRLoading;
+  miraaASRLoading=(async()=>{
+    const {pipeline}=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2');
+    // Tiny é muito mais rápido no celular; mantém suporte multilíngue/japonês.
+    const p=await pipeline(
+      'automatic-speech-recognition',
+      'onnx-community/whisper-tiny',
+      {dtype:'q8', device:'wasm'}
+    );
+    miraaASR=p;
+    return p;
+  })();
+  try{return await miraaASRLoading}
+  finally{miraaASRLoading=null}
+}
+
+async function transcribeMedia(){
+  const f=document.getElementById('mediaFile').files[0];
+  if(!f)return toast('Carregue primeiro o vídeo/áudio');
+
+  const btn=document.getElementById('transcribeBtn');
+  const bar=document.getElementById('tbar');
+  const fill=bar.querySelector('div');
+  const st=document.getElementById('tstatus');
+  const endpoint=(localStorage.miraaBackend||'').trim();
+  const modeSel=localStorage.miraaBackendMode||'balanced';
+
+  btn.disabled=true; bar.classList.remove('hidden'); fill.style.width='2%';
+
+  try{
+    if(!endpoint){
+      st.textContent='Servidor GPU não configurado. Abra ⚙ e informe o endereço.';
+      toast('Configure o servidor GPU');
+      return;
+    }
+
+    st.textContent='Enviando arquivo para a GPU…';
+    const result=await uploadToGPU(f,endpoint,modeSel,(p)=>{
+      fill.style.width=Math.max(2,Math.min(65,p*0.65))+'%';
+      st.textContent=`Enviando arquivo… ${Math.round(p)}%`;
+    });
+
+    if(!result || !Array.isArray(result.cues)) throw new Error('Resposta inválida do servidor');
+
+    cues=result.cues.map(c=>({
+      start:+c.start||0,
+      end:+c.end||((+c.start||0)+2),
+      text:String(c.text||'').trim(),
+      hiragana:String(c.hiragana||''),
+      pt:String(c.pt||'')
+    })).filter(c=>c.text && c.end>c.start);
+
+    current=-1;
+    renderList(); sync();
+    fill.style.width='72%';
+    st.textContent=`✓ Japonês recebido: ${cues.length} frases. Gerando hiragana e tradução…`;
+    toast(cues.length+' frases recebidas da GPU');
+
+    const total=cues.length, concurrency=4;
+    for(let base=0;base<total;base+=concurrency){
+      const batch=cues.slice(base,base+concurrency);
+      await Promise.all(batch.map(async c=>{
+        if(!c.hiragana) c.hiragana=await hira(c.text);
+        if(!c.pt) c.pt=await translate(c.text);
+      }));
+      renderList(); sync();
+      fill.style.width=(72+28*Math.min(base+batch.length,total)/Math.max(1,total))+'%';
+      st.textContent=`GPU concluída · processando ${Math.min(base+batch.length,total)}/${total} frases…`;
+    }
+
+    fill.style.width='100%';
+    st.textContent='✓ Concluído: japonês + hiragana + português.';
+    toast('Transcrição concluída');
+  }catch(e){
+    console.error(e);
+    st.textContent='Erro: '+(e.message||e);
+    toast('Falha na transcrição');
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+function uploadToGPU(file,endpoint,mode,onProgress){
+  return new Promise((resolve,reject)=>{
+    const xhr=new XMLHttpRequest();
+    xhr.open('POST',endpoint,true);
+    xhr.responseType='json';
+    xhr.timeout=60*60*1000;
+    xhr.upload.onprogress=e=>{
+      if(e.lengthComputable) onProgress(e.loaded/e.total*100);
+    };
+    xhr.onerror=()=>reject(new Error('Não foi possível conectar ao servidor GPU'));
+    xhr.ontimeout=()=>reject(new Error('A transcrição excedeu o tempo limite'));
+    xhr.onload=()=>{
+      if(xhr.status>=200&&xhr.status<300){
+        resolve(xhr.response || JSON.parse(xhr.responseText));
+      }else{
+        let msg=xhr.responseText||('HTTP '+xhr.status);
+        try{msg=(JSON.parse(msg).detail)||msg}catch(_){}
+        reject(new Error(msg));
+      }
+    };
+    const fd=new FormData();
+    fd.append('file',file,file.name);
+    fd.append('mode',mode);
+    fd.append('language','ja');
+    xhr.send(fd);
+  });
+}
+
+function loadBackend(){
+  const el=document.getElementById('backendUrl');
+  const mode=document.getElementById('backendMode');
+  if(el)el.value=localStorage.miraaBackend||'';
+  if(mode)mode.value=localStorage.miraaBackendMode||'balanced';
+  const st=document.getElementById('backendStatus');
+  if(st)st.textContent=localStorage.miraaBackend?'Servidor salvo: '+localStorage.miraaBackend:'Configure o servidor GPU para usar a transcrição rápida.';
+}
+function saveBackend(){
+  const u=document.getElementById('backendUrl').value.trim().replace(/\/+$/,'');
+  if(!u)return toast('Informe o endereço do servidor');
+  localStorage.miraaBackend=u;
+  localStorage.miraaBackendMode=document.getElementById('backendMode').value;
+  document.getElementById('backendStatus').textContent='Servidor salvo: '+u;
+  toast('Servidor GPU salvo');
+}
+async function testBackend(){
+  const u=document.getElementById('backendUrl').value.trim().replace(/\/+$/,'');
+  if(!u)return toast('Informe o endereço do servidor');
+  try{
+    const r=await fetch(u.replace(/\/transcribe$/,'')+'/health',{method:'GET'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    document.getElementById('backendStatus').textContent='🟢 Servidor GPU online.';
+    toast('Servidor online');
+  }catch(e){
+    document.getElementById('backendStatus').textContent='🔴 Não foi possível testar: '+e.message;
+    toast('Servidor não respondeu');
+  }
+}
+window.addEventListener('load',loadBackend);
+
+async function decodeAudio(file){
+  const data=await file.arrayBuffer();
+  const ac=new AudioContext();
+  const b=await ac.decodeAudioData(data);
+  const ch=b.numberOfChannels;
+  const len=b.length;
+  const mono=new Float32Array(len);
+  for(let c=0;c<ch;c++){
+    const d=b.getChannelData(c);
+    for(let i=0;i<len;i++) mono[i]+=d[i]/ch;
+  }
+  if(b.sampleRate===16000){
+    await ac.close();
+    return mono;
+  }
+  const target=Math.max(1,Math.ceil(len*16000/b.sampleRate));
+  const off=new OfflineAudioContext(1,target,16000);
+  const buf=off.createBuffer(1,len,b.sampleRate);
+  buf.copyToChannel(mono,0);
+  const src=off.createBufferSource();
+  src.buffer=buf;
+  src.connect(off.destination);
+  src.start();
+  const rendered=await off.startRendering();
+  await ac.close();
+  return rendered.getChannelData(0);
+}
+async function hira(t){try{if(!/[一-龯々]/.test(t))return kana(t);if(!window.kr){await script('https://cdn.jsdelivr.net/npm/kuroshiro@1.2.0/dist/kuroshiro.min.js');await script('https://cdn.jsdelivr.net/npm/kuroshiro-analyzer-kuromoji@1.2.0/dist/kuroshiro-analyzer-kuromoji.min.js');window.kr=new Kuroshiro();await window.kr.init(new KuromojiAnalyzer({dictPath:'https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/'}))}return await window.kr.convert(t,{to:'hiragana'})}catch(e){return kana(t)}}
+function script(src){return new Promise((ok,no)=>{let s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+function kana(t){let base=0x60;return [...t].map(c=>{let n=c.charCodeAt(0);return n>=0x30A1&&n<=0x30F6?String.fromCharCode(n-base):c}).join('')}
+async function translate(t){try{let r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=pt&dt=t&q='+encodeURIComponent(t));let j=await r.json();return(j[0]||[]).map(x=>x[0]||'').join('')||t}catch(e){return t}}
+function exportSRT(){if(!cues.length)return toast('Não há legendas');let s='';cues.forEach((c,i)=>s+=(i+1)+'\n'+ts(c.start)+' --> '+ts(c.end)+'\n'+c.text+'\n\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/plain;charset=utf-8'}));a.download='miraa_ja_hiragana_pt.srt';a.click()}
+function loadYouTube(){let u=document.getElementById('ytUrl').value.trim(),id='';try{let x=new URL(u);if(x.hostname.includes('youtu.be'))id=x.pathname.slice(1).split('/')[0];else if(x.hostname.includes('youtube.com'))id=x.searchParams.get('v')||x.pathname.match(/\/(?:shorts|embed)\/([^/?]+)/)?.[1]||''}catch(e){}if(!/^[A-Za-z0-9_-]{6,}$/.test(id))return toast('URL do YouTube inválida');video.pause();video.removeAttribute('src');video.load();video.style.display='none';yt.style.display='block';yt.src='https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0';document.getElementById('sourceTag').textContent='YOUTUBE';document.getElementById('fileStatus').textContent='YouTube carregado no player. A transcrição automática usa arquivos locais.'}
+async function echo(){if(current<0)return toast('Selecione uma frase');repeatCurrent();document.getElementById('echoStatus').textContent='🔊 Ouça a frase; depois repita em voz alta.';setTimeout(()=>document.getElementById('echoStatus').textContent='🎙 Agora repita.',Math.max(900,(cues[current].end-cues[current].start)*1000))}
+async function record(){try{let stream=await navigator.mediaDevices.getUserMedia({audio:true});chunks=[];recorder=new MediaRecorder(stream);recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=()=>{let b=new Blob(chunks,{type:'audio/webm'});recorded.src=URL.createObjectURL(b);recorded.classList.remove('hidden');stream.getTracks().forEach(t=>t.stop());document.getElementById('echoStatus').textContent='✓ Gravação pronta.'};recorder.start();document.getElementById('echoStatus').textContent='🎙 Gravando…'}catch(e){toast('Permita o microfone no navegador')}}
+function stopRecord(){if(recorder&&recorder.state!=='inactive')recorder.stop()}
+</script>
+<script>
+if('serviceWorker' in navigator && location.protocol!=='file:'){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+</script>
+</body></html>
